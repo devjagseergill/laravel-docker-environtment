@@ -1,0 +1,27 @@
+ARG PHP_VERSION
+FROM php:${PHP_VERSION:-8.0}-apache
+
+
+RUN apt-get update && apt-get upgrade -y \
+    build-essential \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    locales \
+    zip \
+    jpegoptim optipng pngquant gifsicle \
+    vim \
+    unzip \
+    git \
+    curl \
+    libmcrypt-dev
+
+# following line not work for php 8.2
+RUN pecl install mcrypt && docker-php-ext-enable mcrypt
+
+RUN docker-php-ext-install mysqli pdo_mysql bcmath \
+&& docker-php-ext-enable pdo_mysql
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+

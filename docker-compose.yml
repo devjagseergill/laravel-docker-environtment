@@ -1,0 +1,35 @@
+version: '3.9'
+
+services:
+  webapp:
+    container_name: webapp
+    build:
+      context: ./docker
+      dockerfile: webapp
+      args:
+        PHP_VERSION: ${PHP_VERSION}
+    volumes:
+    - ./website:/var/www/html
+    ports:
+    - "${APP_PORT:-80}:80"
+    depends_on:
+      - mysql
+    networks:
+      - backend
+
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    volumes:
+      - ./data/run/var:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+    networks:
+      - backend
+
+networks:
+  backend: {}
+
